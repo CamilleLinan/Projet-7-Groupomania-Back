@@ -3,6 +3,9 @@ const express = require('express');
 // Connexion à la base de données
 const mongodb = require('./db');
 
+// Import des routes
+const userRoutes = require('./routes/user.routes');
+
 // Création de l'application avec express
 const app = express();
 
@@ -17,6 +20,9 @@ app.use((req, res, next) => {
 // Conversion de la requête
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
+
+// Routes de l'API
+app.use('/api/users', userRoutes);
 
 
 module.exports = app;
