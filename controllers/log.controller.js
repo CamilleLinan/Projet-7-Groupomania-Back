@@ -25,16 +25,8 @@ exports.signup = async (req, res) => {
                 });
                 user.save()
                     .then((user) => res.status(201).json({
-                        userId: user.id,
-                        isAdmin: user.isAdmin,
-                        token: jwt.sign({
-                            userId: user.id,
-                            isAdmin: user.isAdmin,
-                        }, `${SECRET_TOKEN}`, {
-                            expiresIn: '24h'
-                        }
-                    ),
-                    message: `Utilisateur créé`,
+                        userId: user._id,
+                        message: `Utilisateur créé`,
                 }))
                     .catch(error => res.status(400).json({ error, message: 'impossible de créer le compte' }));
             })

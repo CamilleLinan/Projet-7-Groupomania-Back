@@ -4,6 +4,7 @@ const passwordSchema = new passwordValidator()
 
 passwordSchema
 .is().min(4)
+.is().max(30)
 .has().uppercase()
 .has().lowercase()
 .has().digits(1);
