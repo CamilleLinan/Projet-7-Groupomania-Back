@@ -53,9 +53,9 @@ exports.signin = async (req, res) => {
                     userId: user.id,
                     isAdmin: user.isAdmin,
                     token: jwt.sign({
-                        userId: user.id,
-                        isAdmin: user.isAdmin,
-                    }, `${SECRET_TOKEN}`,
+                        userId: user._id,
+                        isAdmin: user.isAdmin, }, 
+                        SECRET_TOKEN,
                         { expiresIn: '24h' })
                 });
             })

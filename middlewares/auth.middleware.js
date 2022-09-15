@@ -17,6 +17,6 @@ module.exports = async (req, res, next) => {
 		req.user = user;
 		next();
 	} catch (err) {
-		res.status(401).json({ error: "A token must be provided" });
+		res.status(401).json({ error: "No token" });
 	}
 };
