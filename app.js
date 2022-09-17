@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 // Connexion à la base de données
 const mongodb = require('./db');
@@ -24,6 +25,7 @@ app.use(express.urlencoded({extended:false}));
 
 // Routes de l'API
 app.use('/api/users', userRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
 module.exports = app;

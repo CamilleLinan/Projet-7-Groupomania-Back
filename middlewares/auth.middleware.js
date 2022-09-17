@@ -10,11 +10,10 @@ module.exports = async (req, res, next) => {
 	try {
 		const token = req.headers.authorization.split(" ")[1];
 		const decodedToken = jwt.verify(token, SECRET_TOKEN);
-		const user = await User.findOne({ id: decodedToken.id });
-		if (!user) {
-			throw new Error("invalid");
-		}
-		req.user = user;
+		const userId = await decodedToken.userId;
+		req.auth = {
+			userId: userId
+		};
 		next();
 	} catch (err) {
 		res.status(401).json({ error: "No token" });
