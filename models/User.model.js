@@ -22,7 +22,8 @@ const userSchema = mongoose.Schema({
         required: true, 
         trim: true },
     userPicture: { 
-        type: String, 
+        type: String,
+        default: 'http://localhost:3001/images/random-user.png', 
         required: false }, 
     isAdmin: {
         type: Boolean
