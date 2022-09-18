@@ -17,7 +17,8 @@ router.post('/signin', logCtrl.signin);
 // User routes
 router.get('/', auth, userCtrl.getAllUsers);
 router.get('/:id', auth, userCtrl.getOneUser);
-router.put('/:id', auth, multer, userCtrl.updateUser);
+router.put('/:id', auth, userCtrl.updateUser);
+router.put('/:id/picture', auth, multer, userCtrl.updateUserPhoto);
 router.delete('/:id', auth, userCtrl.deleteUser);
 
 
