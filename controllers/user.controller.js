@@ -49,13 +49,11 @@ exports.updateUserPhoto = (req, res) => {
         if (user.id !== req.auth.userId) {
             return res.status(401).json({ message: 'Non autorisé' });
         } else {
-            const filename = user.userPicture.split('/images')[1];
-            fs.unlink(`images/${filename}`, () => {});
             User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
                 .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
                 .catch(err => {
                     res.status(400).json({ err })
-                });   
+                }); 
         }
     })
     .catch(err => {
