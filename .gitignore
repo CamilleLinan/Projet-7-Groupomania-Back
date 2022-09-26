@@ -1,2 +1,5 @@
 /node_modules
 /.env
+
+/images/*
+!/images/random-user.png
