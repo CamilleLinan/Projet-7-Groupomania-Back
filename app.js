@@ -6,6 +6,7 @@ const mongodb = require('./db');
 
 // Import des routes
 const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
 
 // Création de l'application avec express
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.urlencoded({extended:false}));
 
 // Routes de l'API
 app.use('/api/users', userRoutes);
+app.use('/api/post', postRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
