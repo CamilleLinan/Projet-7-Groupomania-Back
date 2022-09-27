@@ -7,17 +7,18 @@ const auth = require('../middlewares/auth.middleware');
 const multer = require('../middlewares/multer-config');
 
 // Import controllers
-const logCtrl = require('../controllers/log.controller');
 const userCtrl = require('../controllers/user.controller');
 
-// Log routes
-router.post('/signup', password, logCtrl.signup);
-router.post('/signin', logCtrl.signin);
+// Login routes
+router.post('/signup', password, userCtrl.signup);
+router.post('/signin', userCtrl.signin);
 
 // User routes
 router.get('/', auth, userCtrl.getAllUsers);
 router.get('/:id', auth, userCtrl.getOneUser);
-router.put('/:id', auth, multer, userCtrl.updateUser);
+router.put('/:id', auth, userCtrl.updateUser);
+router.put('/:id/password', auth, userCtrl.updatePassword);
+router.put('/:id/picture', auth, multer, userCtrl.updateUserPhoto);
 router.delete('/:id', auth, userCtrl.deleteUser);
 
 
