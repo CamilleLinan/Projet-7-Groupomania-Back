@@ -11,7 +11,6 @@ const dotenv = require('dotenv');
 const { signUpErrors } = require('../utils/errors.utils');
 dotenv.config();
 const SECRET_TOKEN = process.env.SECRET_TOKEN;
-const NEW_SECRET_TOKEN = process.env.NEW_SECRET_TOKEN;
 
 // Créer un compte utilisateur
 exports.signup = async (req, res) => {
