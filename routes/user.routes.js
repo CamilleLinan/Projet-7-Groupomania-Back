@@ -17,6 +17,7 @@ router.post('/signin', userCtrl.signin);
 router.get('/', auth, userCtrl.getAllUsers);
 router.get('/:id', auth, userCtrl.getOneUser);
 router.put('/:id', auth, userCtrl.updateUser);
+router.put('/:id/password', auth, userCtrl.updatePassword);
 router.put('/:id/picture', auth, multer, userCtrl.updateUserPhoto);
 router.delete('/:id', auth, userCtrl.deleteUser);
 

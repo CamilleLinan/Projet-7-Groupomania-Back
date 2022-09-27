@@ -11,6 +11,7 @@ const dotenv = require('dotenv');
 const { signUpErrors } = require('../utils/errors.utils');
 dotenv.config();
 const SECRET_TOKEN = process.env.SECRET_TOKEN;
+const NEW_SECRET_TOKEN = process.env.NEW_SECRET_TOKEN;
 
 // Créer un compte utilisateur
 exports.signup = async (req, res) => {
@@ -89,7 +90,7 @@ exports.updateUser = (req, res) => {
                 return res.status(401).json({ message: 'Non autorisé' });
             } else {
                 User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-                    .then((user) => res.status(200).json({ user, message: 'Profil modifié !' }))
+                    .then((user) => res.status(200).json({ user, message: 'Informations modifiées !' }))
                     .catch(err => {
                         res.status(400).json({ err })
                     });    
@@ -98,6 +99,21 @@ exports.updateUser = (req, res) => {
         .catch(err => {
             res.status(404).json({ err })
         });
+};
+
+// Modifier mot de passe
+exports.updatePassword = async (req, res) => {
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) return res.status(404).json('Utilisateur introuvable');
+    if (user.id !== req.auth.userId) return res.json(401).send('Non autorisé')
+
+    let newPassword = req.body.password
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword.toString(), salt);
+
+    user.save();
+    res.status(200).send(user)
 };
 
 // Modifier la photo de profil
@@ -109,33 +125,33 @@ exports.updateUserPhoto = (req, res) => {
     };
 
     User.findOne({ _id: req.params.id })
-    .then(user => {
-        if (user.id !== req.auth.userId) {
-            return res.status(401).json({ message: 'Non autorisé' });
-        } else {
-            User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
-                .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
-                .catch(err => {
-                    res.status(400).json({ err })
-                }); 
-        }
-    })
-    .catch(err => {
-        res.status(404).json({ err })
-    });
+        .then(user => {
+            if (user.id !== req.auth.userId) {
+                return res.status(401).json({ message: 'Non autorisé' });
+            } else {
+                User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
+                    .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
+                    .catch(err => {
+                        res.status(400).json({ err })
+                    }); 
+            }
+        })
+        .catch(err => {
+            res.status(404).json({ err })
+        });
 }
 
 // Supprimer un utilisateur
 exports.deleteUser = (req, res) => {
     User.findOne({ _id: req.params.id })
-    .then(user => {
-        if (user.id != req.auth.userId) {
-            return res.status(401).json({ message: 'Non autorisé' });
-        } else { 
-            User.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-                    .catch(err => res.status(400).json({ err }));
-        }
-    })
-    .catch(err => res.status(404).json({ err }));
+        .then(user => {
+            if (user.id != req.auth.userId) {
+                return res.status(401).json({ message: 'Non autorisé' });
+            } else { 
+                User.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                        .catch(err => res.status(400).json({ err }));
+            }
+        })
+        .catch(err => res.status(404).json({ err }));
 };
