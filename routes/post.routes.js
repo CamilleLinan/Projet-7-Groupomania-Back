@@ -9,6 +9,7 @@ const auth = require('../middlewares/auth.middleware');
 router.get('/', auth, postCtrl.getAllPosts);
 router.get('/:id', auth, postCtrl.getOnePost);
 router.post('/', auth, multer, postCtrl.createPost);
+router.post('/:id/like', auth, postCtrl.likePost);
 router.put('/:id', auth, multer, postCtrl.updatePost);
 router.delete('/:id', auth, postCtrl.deletePost);
 

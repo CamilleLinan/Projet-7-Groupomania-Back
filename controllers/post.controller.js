@@ -67,3 +67,39 @@ exports.deletePost = (req, res) => {
     })
     .catch(error => res.status(404).json({ error }))
 };
+
+// Évaluer une sauce
+exports.likePost = (req, res, next) => {
+    Post.findOne({ _id: req.params.id })
+        .then(post => {
+            switch (req.body.like) {   
+                // Si la sauce est aimée
+                case 1:
+                    Post.updateOne({ _id: req.params.id }, {
+                        $inc: { likes: 1 },
+                        $push: { usersLiked: req.body.userId },
+                        _id: req.params.id
+                    })
+                        .then(() => res.status(201).json({ message: "Votre avis est bien pris en compte (like) !" }))
+                        .catch(error => res.status(400).json({ error }))
+                    break;
+                    
+                // Si la sauce est déjà aimée et que l'utilisateur veut retirer son like
+                case -1:
+                    if (post.usersLiked.find(user => user === req.body.userId)) {
+                        Post.updateOne({ _id: req.params.id }, {
+                            $inc: { likes: -1 },
+                            $pull: { usersLiked: req.body.userId },
+                            _id: req.params.id
+                        })
+                            .then(() => res.status(201).json({ message: "Votre avis a bien été modifié !" }))
+                            .catch(error => res.status(400).json({ error }))
+                    }
+                break;
+
+                default:
+                    return res.status(500).json({ error });
+            }
+        })
+        .catch(error => res.status(500).json({ error }));
+}
