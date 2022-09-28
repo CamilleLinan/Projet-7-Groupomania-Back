@@ -1,4 +1,5 @@
 const Post = require('../models/Post.model');
+const ObjectID = require('mongoose').Types.ObjectId;
 const fs = require('fs');
 
 // Récupérer tous les posts
@@ -43,7 +44,9 @@ exports.updatePost = (req, res) => {
 
     Post.findOne({ _id: req.params.id })
         .then(post => {
-            if (post.posterId != req.auth.userId) {
+            if (post.posterId !== req.auth.userId) {
+                console.log(post.posterId);
+                console.log(req.auth.userId);
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
                 Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
@@ -58,7 +61,7 @@ exports.updatePost = (req, res) => {
 exports.deletePost = (req, res) => {
     Post.findOne({ _id: req.params.id })
     .then(post => {
-        if (post.posterId != req.auth.userId) {
+        if (post.posterId !== req.auth.userId) {
             res.status(401).json({ message: 'Non autorisé' });
         } else {
             const filename = post.imageUrl.split('/images')[1];
