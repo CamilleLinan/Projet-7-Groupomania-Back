@@ -11,7 +11,7 @@ exports.getAllPosts = (req, res) => {
 
 // Récupérer un post
 exports.getOnePost = (req, res) => {
-    Post.findOne()
+    Post.findOne({ _id: req.params.id })
         .then(post => res.status(200).json(post))
         .catch(error => res.status(404).json({ error }));
 };
@@ -19,7 +19,6 @@ exports.getOnePost = (req, res) => {
 // Créer un post
 exports.createPost = (req, res) => {
     const postObject = req.file ? {
-        ...JSON.parse(req.body.post),
         postPicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     const posterId = req.body.posterId;
@@ -45,11 +44,9 @@ exports.updatePost = (req, res) => {
     Post.findOne({ _id: req.params.id })
         .then(post => {
             if (post.posterId !== req.auth.userId) {
-                console.log(post.posterId);
-                console.log(req.auth.userId);
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
-                Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
+                Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
                     .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
                     .catch(err => res.status(400).json({ err }));
             }
@@ -64,12 +61,9 @@ exports.deletePost = (req, res) => {
         if (post.posterId !== req.auth.userId) {
             res.status(401).json({ message: 'Non autorisé' });
         } else {
-            const filename = post.imageUrl.split('/images')[1];
-            fs.unlink(`images/${filename}`, () => {
-                Post.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Post supprimé !' }))
-                    .catch(error => res.status(400).json({ error }));
-            });
+            Post.deleteOne({ _id: req.params.id })
+                .then(() => res.status(200).json({ message: 'Post supprimé !' }))
+                .catch(error => res.status(400).json({ error }));
         }
     })
     .catch(error => res.status(404).json({ error }))
