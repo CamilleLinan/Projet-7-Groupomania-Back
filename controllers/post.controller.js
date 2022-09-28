@@ -1,5 +1,4 @@
 const Post = require('../models/Post.model');
-const ObjectID = require('mongoose').Types.ObjectId;
 const fs = require('fs');
 
 // Récupérer tous les posts
