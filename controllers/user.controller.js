@@ -52,8 +52,6 @@ exports.signin = async (req, res) => {
                 }
                 res.status(200).json({
                     userId: user.id,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
                     isAdmin: user.isAdmin,
                     token: jwt.sign({
                         userId: user._id,

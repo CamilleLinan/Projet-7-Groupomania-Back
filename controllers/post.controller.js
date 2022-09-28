@@ -18,6 +18,7 @@ exports.getOnePost = (req, res) => {
 // Créer un post
 exports.createPost = (req, res) => {
     const postObject = req.file ? {
+        ...JSON.parse(req.body.post),
         postPicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     const posterId = req.body.posterId;
@@ -37,13 +38,12 @@ exports.createPost = (req, res) => {
 // Éditer un post
 exports.updatePost = (req, res) => {
     const postObject = req.file ? {
-        ...JSON.parse(req.body.post),
         postPicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
 
     Post.findOne({ _id: req.params.id })
         .then(post => {
-            if (post.posterId == req.auth.userId) {
+            if (post.posterId != req.auth.userId) {
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
                 Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
@@ -51,7 +51,7 @@ exports.updatePost = (req, res) => {
                     .catch(err => res.status(400).json({ err }));
             }
         })
-        .catch(err => res.status(404).json({ err }));
+        .catch(err => res.status(404).json({ err, message: 'post introuvable' }));
 };
 
 // Supprimer un post
