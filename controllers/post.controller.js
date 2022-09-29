@@ -68,12 +68,12 @@ exports.deletePost = (req, res) => {
     .catch(error => res.status(404).json({ error }))
 };
 
-// Évaluer une sauce
+// Liker un post
 exports.likePost = (req, res, next) => {
     Post.findOne({ _id: req.params.id })
         .then(post => {
             switch (req.body.like) {   
-                // Si la sauce est aimée
+                // Si le post est aimé
                 case 1:
                     Post.updateOne({ _id: req.params.id }, {
                         $inc: { likes: 1 },
@@ -84,7 +84,7 @@ exports.likePost = (req, res, next) => {
                         .catch(error => res.status(400).json({ error }))
                     break;
                     
-                // Si la sauce est déjà aimée et que l'utilisateur veut retirer son like
+                // Si le post est déjà aimé et que l'utilisateur veut retirer son like
                 case -1:
                     if (post.usersLiked.find(user => user === req.body.userId)) {
                         Post.updateOne({ _id: req.params.id }, {
@@ -98,8 +98,22 @@ exports.likePost = (req, res, next) => {
                 break;
 
                 default:
-                    return res.status(500).json({ error });
+                    return res.status(500).json({ error, message: 'Action impossible' });
             }
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => res.status(500).json({ error, message: 'Post introuvable' }));
+}
+
+// Ajouter un commentaire
+exports.commentPost = (req, res, next) => {
+    Post.findOne({ _id: req.params.id })
+        .then(() => {
+            Post.updateOne({ _id: req.params.id }, {
+                $push: { comments: {commenterId: req.body.userId, comment: req.body.comment} },
+                _id: req.params.id
+            })
+                .then((post) => res.status(201).json({ post, message: "Commentaire créé !" }))
+                .catch(error => res.status(400).json({ error, message: 'Action impossible' }))     
+            })
+        .catch(error => res.status(500).json({ error, message: 'Post introuvable' }));
 }

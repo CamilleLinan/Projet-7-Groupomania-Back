@@ -9,7 +9,7 @@ const postSchema = mongoose.Schema({
     comments: { 
         type: [{
             commenterId: String,
-            text: String,
+            comment: String,
             timestamps: Number,
         }], require: false },
 }, {timestamps: true});
