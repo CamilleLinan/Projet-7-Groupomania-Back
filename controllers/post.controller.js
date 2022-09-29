@@ -103,17 +103,3 @@ exports.likePost = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error, message: 'Post introuvable' }));
 }
-
-// Ajouter un commentaire
-exports.commentPost = (req, res, next) => {
-    Post.findOne({ _id: req.params.id })
-        .then(() => {
-            Post.updateOne({ _id: req.params.id }, {
-                $push: { comments: {commenterId: req.body.userId, comment: req.body.comment} },
-                _id: req.params.id
-            })
-                .then((post) => res.status(201).json({ post, message: "Commentaire créé !" }))
-                .catch(error => res.status(400).json({ error, message: 'Action impossible' }))     
-            })
-        .catch(error => res.status(500).json({ error, message: 'Post introuvable' }));
-}

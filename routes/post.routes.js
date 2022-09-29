@@ -15,7 +15,4 @@ router.delete('/:id', auth, postCtrl.deletePost);
 // Like
 router.post('/:id/like', auth, postCtrl.likePost);
 
-// Comment
-router.post('/:id/comment', auth, postCtrl.commentPost);
-
 module.exports = router;

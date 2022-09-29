@@ -6,12 +6,6 @@ const postSchema = mongoose.Schema({
     postPicture: { type: String, required: false },
     likes: { type: Number, required: false, default: 0 },
     usersLiked: { type: [String], required: false },
-    comments: { 
-        type: [{
-            commenterId: String,
-            comment: String,
-            timestamps: Number,
-        }], require: false },
 }, {timestamps: true});
 
 module.exports = mongoose.model('Post', postSchema);
