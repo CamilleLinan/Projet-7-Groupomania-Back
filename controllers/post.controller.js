@@ -42,8 +42,9 @@ exports.updatePost = (req, res) => {
 
     Post.findOne({ _id: req.params.id })
         .then(post => {
-            if (post.posterId !== req.auth.userId) {
+            if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
                 res.status(401).json({ message: 'Non autorisé' });
+                console.log(req.body.isAdmin);
             } else {
                 Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
                     .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
@@ -57,7 +58,7 @@ exports.updatePost = (req, res) => {
 exports.deletePost = (req, res) => {
     Post.findOne({ _id: req.params.id })
     .then(post => {
-        if (post.posterId !== req.auth.userId) {
+        if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
             res.status(401).json({ message: 'Non autorisé' });
         } else {
             Post.deleteOne({ _id: req.params.id })
