@@ -151,11 +151,17 @@ exports.deleteUser = (req, res) => {
                 return res.status(401).json({ message: 'Non autorisé' });
             } else {
                 const filename = user.userPicture.split('/images')[1];
-                fs.unlink(`images/${filename}`, () => { 
-                User.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-                    .catch(err => res.status(400).json({ err }));
-                });
+                if (filename === '/random-user.png') { 
+                    User.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                        .catch(err => res.status(400).json({ err })); 
+                } else {
+                    fs.unlink(`images/${filename}`, () => { 
+                    User.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                        .catch(err => res.status(400).json({ err }));
+                    });
+                }
             }
         })
         .catch(err => res.status(404).json({ err }));
