@@ -1,16 +1,31 @@
 const Post = require('../models/Post.model');
+const User = require('../models/User.model');
 const fs = require('fs');
 
 // Récupérer tous les posts
 exports.getAllPosts = (req, res) => {
-    Post.find()
+    Post.aggregate([
+        {"$lookup": {
+            "from": "User",
+            "localField": "posterId",
+            "foreignField": "_id",
+            "as": "User"
+        }}
+    ]).sort({postNumber:-1})
         .then(posts => res.status(200).json(posts))
         .catch(error => res.status(404).json({ error }));
 };
 
 // Récupérer un post
 exports.getOnePost = (req, res) => {
-    Post.findOne({ _id: req.params.id })
+    Post.aggregate({ _id: req.params.id } [
+        {"$lookup": {
+            "from": "User",
+            "localField": "posterId",
+            "foreignField": "_id",
+            "as": "User"
+        }}
+    ]).sort({postNumber:-1})
         .then(post => res.status(200).json(post))
         .catch(error => res.status(404).json({ error }));
 };
@@ -20,7 +35,7 @@ exports.createPost = (req, res) => {
     const postObject = req.file ? {
         postPicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
-    const posterId = req.body.posterId;
+    const posterId = req.body.posterId
     const message = req.body.message;
 
     const post = new Post({
@@ -45,12 +60,18 @@ exports.updatePost = (req, res) => {
             if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
-                const filename = post.postPicture.split('/images')[1];
-                fs.unlink(`images/${filename}`, () => {
-                Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
-                    .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
-                    .catch(err => res.status(400).json({ err }));
-                });
+                if (post.postPicture) {
+                    const filename = post.postPicture.split('/images')[1];
+                    fs.unlink(`images/${filename}`, () => {
+                    Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
+                        .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
+                        .catch(err => res.status(400).json({ err }));
+                    });
+                } else {
+                    Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
+                        .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
+                        .catch(err => res.status(400).json({ err }));
+                }
             }
         })
         .catch(err => res.status(404).json({ err }));
@@ -63,12 +84,17 @@ exports.deletePost = (req, res) => {
         if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
             res.status(401).json({ message: 'Non autorisé' });
         } else {
-            const filename = post.postPicture.split('/images')[1];
-            fs.unlink(`images/${filename}`, () => {
-            Post.deleteOne({ _id: req.params.id })
-                .then(() => res.status(200).json({ message: 'Post supprimé !' }))
-                .catch(error => res.status(400).json({ error }));
-            });
+            if (post.postPicture) {
+                const filename = post.postPicture.split('/images')[1];
+                fs.unlink(`images/${filename}`, () => {});
+                Post.deleteOne({ _id: req.params.id })
+                    .then(() => res.status(200).json({ message: 'Post supprimé !' }))
+                    .catch(error => res.status(400).json({ error })); 
+            } else {
+                Post.deleteOne({ _id: req.params.id })
+                    .then(() => res.status(200).json({ message: 'Post supprimé !' }))
+                    .catch(error => res.status(400).json({ error }));
+            }
         }
     })
     .catch(error => res.status(404).json({ error }))
@@ -79,7 +105,7 @@ exports.likePost = (req, res, next) => {
     Post.findOne({ _id: req.params.id })
         .then(post => {
             switch (req.body.like) {   
-                // Si le post est aimé
+                // Ajouter un like
                 case 1:
                     Post.updateOne({ _id: req.params.id }, {
                         $inc: { likes: 1 },
@@ -88,9 +114,9 @@ exports.likePost = (req, res, next) => {
                     })
                         .then(() => res.status(201).json({ message: "Votre avis est bien pris en compte (like) !" }))
                         .catch(error => res.status(400).json({ error }))
-                    break;
+                break;
                     
-                // Si le post est déjà aimé et que l'utilisateur veut retirer son like
+                // Supprimer un like
                 case -1:
                     if (post.usersLiked.find(user => user === req.body.userId)) {
                         Post.updateOne({ _id: req.params.id }, {
