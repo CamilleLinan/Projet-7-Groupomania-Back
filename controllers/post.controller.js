@@ -60,21 +60,21 @@ exports.updatePost = (req, res) => {
             if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
-                if (post.postPicture) {
-                    const filename = post.postPicture.split('/images')[1];
+                const filename = post.postPicture.split('/images')[1];
+                if (postObject.postPicture === undefined || postObject.postPicture === post.postPicture) {
+                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
+                        .then((post) => res.status(200).json(post))
+                        .catch((error) => res.status(400).json(error));
+                } else {
                     fs.unlink(`images/${filename}`, () => {
                     Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
                         .then((post) => res.status(200).json(post))
-                        .catch((err) => res.status(400).json(err));
+                        .catch((error) => res.status(400).json(error));
                     });
-                } else {
-                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
-                        .then((post) => res.status(200).json(post))
-                        .catch((err) => res.status(400).json(err));
                 }
             }
         })
-        .catch(err => res.status(404).json({ err }));
+        .catch(error => res.status(404).json({ error }));
 };
 
 // Supprimer un post
@@ -86,10 +86,11 @@ exports.deletePost = (req, res) => {
         } else {
             if (post.postPicture) {
                 const filename = post.postPicture.split('/images')[1];
-                fs.unlink(`images/${filename}`, () => {});
+                fs.unlink(`images/${filename}`, () => {
                 Post.deleteOne({ _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Post supprimé !' }))
                     .catch(error => res.status(400).json({ error })); 
+                });
             } else {
                 Post.deleteOne({ _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Post supprimé !' }))
