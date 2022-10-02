@@ -1,5 +1,4 @@
 const Post = require('../models/Post.model');
-const User = require('../models/User.model');
 const fs = require('fs');
 
 // Récupérer tous les posts
