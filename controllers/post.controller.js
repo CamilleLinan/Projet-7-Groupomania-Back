@@ -63,14 +63,14 @@ exports.updatePost = (req, res) => {
                 if (post.postPicture) {
                     const filename = post.postPicture.split('/images')[1];
                     fs.unlink(`images/${filename}`, () => {
-                    Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
-                        .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
-                        .catch(err => res.status(400).json({ err }));
+                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
+                        .then((post) => res.status(200).json(post))
+                        .catch((err) => res.status(400).json(err));
                     });
                 } else {
-                    Post.updateOne({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id })
-                        .then((updatePost) => res.status(200).json({ updatePost, message: "Post modifié !" }))
-                        .catch(err => res.status(400).json({ err }));
+                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
+                        .then((post) => res.status(200).json(post))
+                        .catch((err) => res.status(400).json(err));
                 }
             }
         })
