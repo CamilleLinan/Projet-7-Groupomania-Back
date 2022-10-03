@@ -52,8 +52,6 @@ exports.signin = async (req, res) => {
                 }
                 res.status(200).json({
                     userId: user.id,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
                     isAdmin: user.isAdmin,
                     token: jwt.sign({
                         userId: user._id,
@@ -119,20 +117,25 @@ exports.updatePassword = async (req, res) => {
 exports.updateUserPhoto = (req, res) => {
     const newUserPicture = req.file ? {
         userPicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : {
-        ...req.body
-    };
+    } : { ...req.body };
 
     User.findOne({ _id: req.params.id })
         .then(user => {
             if (user.id !== req.auth.userId) {
                 return res.status(401).json({ message: 'Non autorisé' });
             } else {
-                User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
-                    .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
-                    .catch(err => {
-                        res.status(400).json({ err })
-                    }); 
+                const filename = user.userPicture.split('/images')[1];
+                if (filename === '/random-user.png') {
+                    User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
+                        .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
+                        .catch(err => res.status(400).json({ err }));
+                } else {
+                    fs.unlink(`images/${filename}`, () => {
+                    User.updateOne({ _id: req.params.id }, { ...newUserPicture, _id: req.params.id })
+                        .then((user) => res.status(200).json({ user, message: 'Photo de profil modifiée !' }))
+                        .catch(err => res.status(400).json({ err }));
+                    });
+                } 
             }
         })
         .catch(err => {
@@ -146,10 +149,19 @@ exports.deleteUser = (req, res) => {
         .then(user => {
             if (user.id != req.auth.userId) {
                 return res.status(401).json({ message: 'Non autorisé' });
-            } else { 
-                User.deleteOne({ _id: req.params.id })
+            } else {
+                const filename = user.userPicture.split('/images')[1];
+                if (filename === '/random-user.png') { 
+                    User.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                        .catch(err => res.status(400).json({ err })); 
+                } else {
+                    fs.unlink(`images/${filename}`, () => { 
+                    User.deleteOne({ _id: req.params.id })
                         .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
                         .catch(err => res.status(400).json({ err }));
+                    });
+                }
             }
         })
         .catch(err => res.status(404).json({ err }));
