@@ -59,18 +59,9 @@ exports.updatePost = (req, res) => {
             if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
-                const filename = post.postPicture.split('/images')[1];
-                if (postObject.postPicture === undefined || postObject.postPicture === post.postPicture) {
-                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
-                        .then((post) => res.status(200).json(post))
-                        .catch((error) => res.status(400).json(error));
-                } else {
-                    fs.unlink(`images/${filename}`, () => {
-                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
-                        .then((post) => res.status(200).json(post))
-                        .catch((error) => res.status(400).json(error));
-                    });
-                }
+                Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
+                    .then((post) => res.status(200).json(post))
+                    .catch((error) => res.status(400).json(error));
             }
         })
         .catch(error => res.status(404).json({ error }));
