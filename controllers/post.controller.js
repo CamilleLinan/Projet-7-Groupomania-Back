@@ -5,27 +5,13 @@ const fs = require('fs');
 exports.getAllPosts = (req, res) => {
     Post.aggregate([
         {"$lookup": {
-            "from": "User",
+            "from": "users",
             "localField": "posterId",
             "foreignField": "_id",
             "as": "User"
         }},
     ]).sort({postNumber:-1})
         .then(posts => res.status(200).json(posts))
-        .catch(error => res.status(404).json({ error }));
-};
-
-// Récupérer un post
-exports.getOnePost = (req, res) => {
-    Post.aggregate({ _id: req.params.id } [
-        {"$lookup": {
-            "from": "User",
-            "localField": "posterId",
-            "foreignField": "_id",
-            "as": "User"
-        }}
-    ]).sort({postNumber:-1})
-        .then(post => res.status(200).json(post))
         .catch(error => res.status(404).json({ error }));
 };
 
