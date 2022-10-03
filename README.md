@@ -2,9 +2,9 @@
 
 · Télécharger ' NodeJS '
 
-· Créer un fichier ' .env ' pour remplir les variables d'environnements ( utilisation du PORT=3001 )
+· Créer un fichier ' .env ' pour remplir les variables d'environnements
 
-· Se rendre dans le dossier Backend, installer Node et toute les dépendances avec ' npm i '
+· Installer Node et toutes ses dépendances avec ' npm i '
 
 · Lancer le serveur avec ' nodemon server '
 

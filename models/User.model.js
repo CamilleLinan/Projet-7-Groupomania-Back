@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const { isEmail } = require('validator');
 
+// Utilisation de dotenv
+const dotenv = require('dotenv');
+dotenv.config();
+const DEFAULT_PICTURE_URL = process.env.DEFAULT_PICTURE_URL;
+
 const userSchema = mongoose.Schema({
     firstname: { 
         type: String, 
@@ -23,7 +28,7 @@ const userSchema = mongoose.Schema({
         trim: true },
     userPicture: { 
         type: String,
-        default: 'http://localhost:3001/images/random-user.png', 
+        default: `${DEFAULT_PICTURE_URL}`, 
         required: false }, 
     isAdmin: {
         type: Boolean

@@ -2,13 +2,13 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const emailValidator = require('email-validator');
+const { signUpErrors } = require('../utils/errors.utils');
 
 // Import du model User
 const User = require('../models/User.model');
 
 // Utilisation de dotenv
 const dotenv = require('dotenv');
-const { signUpErrors } = require('../utils/errors.utils');
 dotenv.config();
 const SECRET_TOKEN = process.env.SECRET_TOKEN;
 
