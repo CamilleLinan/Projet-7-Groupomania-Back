@@ -45,10 +45,19 @@ exports.updatePost = (req, res) => {
             if (post.posterId !== req.auth.userId && req.body.isAdmin === false) {
                 res.status(401).json({ message: 'Non autorisé' });
             } else {
+                if (post.postPicture && req.file) {
+                    const filename = post.postPicture.split('/images')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
+                    .then((post) => res.status(200).json(post))
+                    .catch((error) => res.status(400).json(error));
+                })
+            } else {
                 Post.findOneAndUpdate({ _id: req.params.id }, { ...postObject, ...req.body, _id: req.params.id }, { returnOriginal: false })
                     .then((post) => res.status(200).json(post))
                     .catch((error) => res.status(400).json(error));
             }
+        }
         })
         .catch(error => res.status(404).json({ error }));
 };
