@@ -10,13 +10,15 @@
 
 ![Alt text](/groupomaniaCover.webp?raw=true "Cover Groupomania OpenClassrooms")
 
-+ Contexte :
-Groupomania est une entreprise ayant un ralentissement de sa productivité attribué à une baisse de la motivation et de l'implication des employés. Elle souhaite donc créer un réseau social d'entreprise afin d'améliorer la relation entre ces derniers.
+## Contexte :
+Groupomania est une entreprise ayant un ralentissement de sa productivité attribué à une baisse de la motivation et de l'implication des employés. 
+Elle souhaite donc créer un réseau social d'entreprise afin d'améliorer la relation entre ces derniers.
 
-+ Objectifs :
-Créer une partie front-end avec un framework JavaScript, ici React. Et une API sécurisée permettant aux utilisateurs de se créer un compte, se connecter et se déconnecter. Ainsi que créer un post, modifier ou supprimer leur post, et liker tous les posts. J'ai également ajouté une page où les utilisateurs peuvent modifier leurs informations.
+## Objectifs :
+Créer une partie front-end avec un framework JavaScript, ici React. Et une API sécurisée permettant aux utilisateurs de se créer un compte, se connecter et se déconnecter. Ainsi que créer un post, modifier ou supprimer leur post, et liker tous les posts. 
+J'ai également ajouté une page où les utilisateurs peuvent modifier leurs informations.
 
-+ Langages utilisés :
+## Langages utilisés :
 HTML5 / CSS3 / SASS / JavaScript / Node.js / MongoDB
 
-Plus d'informations sur mon portfolio : https://camillelinan.com/project/Groupomania
++ Plus d'informations sur mon portfolio : https://camillelinan.com/project/Groupomania
