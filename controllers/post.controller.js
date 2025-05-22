@@ -30,7 +30,7 @@ exports.createPost = (req, res) => {
     });
 
     post.save()
-        .then((post) => res.status(201).json({ post, message: "Post créé avec succès !" }))
+        .then(post => res.status(201).json({ post, message: "Post créé avec succès !" }))
         .catch(error => res.status(400).json({ error }));
 };
 

@@ -21,5 +21,4 @@ router.put('/:id/password', auth, userCtrl.updatePassword);
 router.put('/:id/picture', auth, multer, userCtrl.updateUserPhoto);
 router.delete('/:id', auth, userCtrl.deleteUser);
 
-
 module.exports = router;
